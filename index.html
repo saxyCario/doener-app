@@ -1,0 +1,986 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f97316">
+<title>🥙 Döner-Ratingcrew</title>
+<style>
+  :root {
+    --orange-50: #fff7ed;
+    --orange-100: #ffedd5;
+    --orange-200: #fed7aa;
+    --orange-500: #f97316;
+    --orange-600: #ea580c;
+    --amber-400: #fbbf24;
+    --slate-100: #f1f5f9;
+    --slate-200: #e2e8f0;
+    --slate-400: #94a3b8;
+    --slate-500: #64748b;
+    --slate-600: #475569;
+    --slate-700: #334155;
+    --slate-800: #1e293b;
+    --emerald-500: #10b981;
+    --rose-500: #f43f5e;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--orange-50);
+    color: var(--slate-800);
+    padding-bottom: 4rem;
+  }
+  header {
+    background: linear-gradient(to right, #f43f5e, #f97316, #fbbf24);
+    color: #fff;
+    padding: 1.5rem 1rem 2rem;
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,.15);
+  }
+  .wrap { max-width: 64rem; margin: 0 auto; padding: 0 1rem; }
+  .head-flex { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; max-width: 64rem; margin: 0 auto; padding: 0 1rem; }
+  h1 { font-size: 1.9rem; font-weight: 900; margin: 0; letter-spacing: -0.02em; text-shadow: 0 1px 2px rgba(0,0,0,.2); }
+  .subtitle { margin: 0.3rem 0 0; font-size: 0.85rem; color: rgba(255,255,255,.92); }
+  .who { display: flex; align-items: center; gap: 0.5rem; }
+  .who span { font-size: 0.75rem; font-weight: 500; color: rgba(255,255,255,.9); }
+  select.inp-select {
+    padding: 0.4rem 0.7rem; border-radius: 0.6rem; border: 1px solid rgba(255,255,255,.4);
+    background: rgba(255,255,255,.2); color: #fff; font-weight: 500; min-width: 10rem;
+  }
+  select.inp-select option { color: var(--slate-800); }
+
+  .tabs { display: flex; flex-wrap: wrap; gap: 0.25rem; background: #fff; padding: 0.3rem; border-radius: 0.8rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,.1); margin-top: -1.3rem; width: max-content; max-width: 100%; }
+  .tab-btn { border: 0; background: transparent; padding: 0.5rem 0.9rem; border-radius: 0.6rem; font-weight: 600; font-size: 0.85rem; color: var(--slate-500); cursor: pointer; }
+  .tab-btn.active { background: var(--orange-100); color: #c2410c; }
+
+  .card { background: #fff; border: 1px solid var(--orange-200); border-radius: 0.9rem; padding: 1.25rem; box-shadow: 0 1px 2px rgba(0,0,0,.05); }
+  .card + .card { margin-top: 1rem; }
+  .grid-shops { display: grid; gap: 1rem; grid-template-columns: 1fr; margin-top: 1rem; }
+  .form-grid { display: grid; gap: 0.75rem; grid-template-columns: 1fr; margin: 0.75rem 0; }
+  @media (min-width: 768px) {
+    .grid-shops { grid-template-columns: 1fr 1fr; }
+    .form-grid { grid-template-columns: 1fr 1fr; }
+    .grid-crew { grid-template-columns: 1fr 1fr 1fr; }
+    .podium { grid-template-columns: 1fr 1fr 1fr; }
+  }
+  .grid-crew { display: grid; gap: 1rem; grid-template-columns: 1fr; margin-top: 1rem; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem; padding: 0.5rem 1rem; border-radius: 0.65rem; border: 1px solid transparent; font-weight: 600; font-size: 0.85rem; cursor: pointer; font-family: inherit; }
+  .btn-primary { background: var(--orange-500); color: #fff; }
+  .btn-primary:hover:not(:disabled) { background: var(--orange-600); }
+  .btn-outline { background: #fff; border-color: var(--slate-200); color: var(--slate-700); }
+  .btn-outline:hover { background: var(--slate-100); }
+  .btn-ghost { background: transparent; color: var(--slate-400); }
+  .btn-ghost:hover { background: var(--rose-500); color: #fff; }
+  .btn-ghost-edit:hover { background: var(--orange-100); color: #c2410c; }
+  .btn-sm { padding: 0.35rem 0.7rem; font-size: 0.8rem; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .inp { width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--slate-200); border-radius: 0.65rem; font: inherit; background: #fff; color: var(--slate-800); }
+  .inp:focus { outline: 2px solid var(--amber-400); outline-offset: 0; border-color: var(--amber-400); }
+  label { font-size: 0.8rem; font-weight: 600; color: var(--slate-600); display: block; margin-bottom: 0.25rem; }
+  .field { }
+  textarea.inp { resize: vertical; }
+
+  .badge { display: inline-flex; align-items: center; padding: 0.15rem 0.55rem; border-radius: 9999px; border: 1px solid; font-size: 0.7rem; font-weight: 600; }
+  .badge-amber { border-color: #fde68a; background: #fffbeb; color: #b45309; }
+  .badge-emerald { border-color: #a7f3d0; background: #ecfdf5; color: #047857; }
+  .badge-rose { border-color: #fecdd3; background: #fff1f2; color: #be123c; }
+  .badges { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.5rem; }
+
+  .avatar { border-radius: 9999px; background: var(--orange-100); border: 1px solid var(--orange-200); display: inline-flex; align-items: center; justify-content: center; }
+  .av-sm { width: 1.75rem; height: 1.75rem; font-size: 0.85rem; }
+  .av-md { width: 2.25rem; height: 2.25rem; font-size: 1.05rem; }
+  .av-lg { width: 3rem; height: 3rem; font-size: 1.5rem; }
+  .avatar-row { display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap; }
+  .avatar-row .dim { opacity: 0.35; filter: grayscale(1); }
+
+  .score-badge { width: 3.5rem; height: 3.5rem; border-radius: 9999px; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; }
+  .score-badge .v { font-size: 1.05rem; font-weight: 700; line-height: 1; }
+  .score-badge .c { font-size: 0.6rem; opacity: 0.9; }
+  .score-em { background: var(--emerald-500); }
+  .score-am { background: #f59e0b; }
+  .score-ro { background: var(--rose-500); }
+  .score-empty { border: 2px dashed #cbd5e1; color: var(--slate-400); background: transparent; }
+
+  .cat-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; }
+  .cat-row:last-child { margin-bottom: 0; }
+  .cat-label { width: 7.5rem; flex-shrink: 0; font-size: 0.72rem; font-weight: 500; color: var(--slate-600); }
+  .bar-track { height: 0.5rem; background: var(--slate-100); border-radius: 9999px; overflow: hidden; flex: 1; }
+  .bar-fill { height: 100%; background: linear-gradient(to right, var(--amber-400), var(--orange-500)); border-radius: 9999px; transition: width 0.3s; }
+  .cat-val { width: 2.25rem; flex-shrink: 0; text-align: right; font-size: 0.72rem; font-weight: 600; color: var(--slate-500); }
+
+  .star-btn { border: 0; background: transparent; font-size: 1.3rem; line-height: 1; cursor: pointer; color: #cbd5e1; padding: 0 0.08rem; transition: transform 0.1s; }
+  .star-btn:hover { transform: scale(1.2); color: #fde68a; }
+  .star-btn.on { color: var(--amber-400); }
+
+  .overlay { position: fixed; inset: 0; background: rgba(15,23,42,.45); z-index: 40; }
+  .hidden { display: none !important; }
+
+  .rating-panel { position: fixed; top: 0; right: 0; bottom: 0; width: 100%; max-width: 28rem; background: #fff; border-left: 1px solid var(--slate-200); box-shadow: -12px 0 30px rgba(0,0,0,.2); transform: translateX(105%); transition: transform 0.25s ease; z-index: 50; display: flex; flex-direction: column; }
+  .rating-panel.open { transform: translateX(0); }
+  .rating-head { padding: 1.1rem 1.25rem 0.9rem; border-bottom: 1px solid var(--slate-100); position: relative; }
+  .rating-head h3 { margin: 0; font-size: 1.2rem; font-weight: 800; }
+  .rating-head p { margin: 0.3rem 0 0; font-size: 0.8rem; color: var(--slate-500); }
+  .rating-head .hint { font-size: 0.7rem; color: #059669; }
+  .close-x { position: absolute; top: 0.6rem; right: 0.6rem; border: 0; background: transparent; font-size: 1.2rem; color: var(--slate-400); cursor: pointer; padding: 0.2rem 0.4rem; border-radius: 0.4rem; }
+  .close-x:hover { background: var(--slate-100); color: var(--slate-700); }
+  .rating-scroll { flex: 1; overflow-y: auto; padding: 1rem 1.25rem; }
+  .cat-box { border: 1px solid var(--orange-100); background: rgba(255,251,235,.6); border-radius: 0.75rem; padding: 0.75rem; margin-bottom: 0.75rem; }
+  .cat-box h4 { margin: 0 0 0.5rem; font-size: 0.85rem; font-weight: 700; color: var(--slate-700); }
+  .sub-row { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.15rem 0; }
+  .sub-row .sub-label { font-size: 0.72rem; color: var(--slate-600); }
+  .rating-foot { padding: 0.9rem 1.25rem; border-top: 1px solid var(--slate-100); display: flex; gap: 0.5rem; }
+  .rating-foot .btn-primary { flex: 1; }
+
+  .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); z-index: 50; background: #fff; border-radius: 1rem; box-shadow: 0 20px 50px rgba(0,0,0,.25); padding: 1.5rem; width: calc(100% - 2rem); max-width: 30rem; max-height: 88vh; overflow-y: auto; }
+  .modal h3 { margin: 0 0 0.75rem; font-size: 1.1rem; font-weight: 800; }
+  .modal p.desc { margin: 0 0 0.75rem; font-size: 0.82rem; color: var(--slate-500); }
+  .modal-actions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem; }
+  .check-box { border: 1px solid var(--slate-200); border-radius: 0.65rem; padding: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem; margin: 0.75rem 0; }
+  .checkbox-label { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--slate-700); cursor: pointer; }
+  input[type="checkbox"] { width: 1.05rem; height: 1.05rem; accent-color: var(--orange-500); cursor: pointer; }
+
+  .code-area { width: 100%; height: 9rem; resize: none; border: 1px solid var(--slate-200); background: var(--slate-100); border-radius: 0.6rem; padding: 0.5rem; font-family: ui-monospace, monospace; font-size: 0.68rem; line-height: 1.2; color: var(--slate-600); }
+  .msg-ok { color: #059669; font-weight: 600; }
+  .msg-err { color: var(--rose-500); font-weight: 600; }
+
+  .shop-head { display: flex; justify-content: space-between; gap: 0.75rem; align-items: flex-start; }
+  .shop-title { font-size: 1.1rem; font-weight: 800; margin: 0; }
+  .shop-meta { font-size: 0.72rem; color: var(--slate-500); margin: 0.15rem 0 0; display: flex; align-items: center; gap: 0.25rem; flex-wrap: wrap; }
+  .comments p { background: var(--slate-100); border-radius: 0.6rem; padding: 0.4rem 0.75rem; font-size: 0.72rem; color: var(--slate-600); margin: 0.25rem 0; }
+  .card-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; }
+  .icon-actions { display: flex; gap: 0.25rem; }
+
+  .podium { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+  .podium .card { position: relative; }
+  .rank-1 { border-color: #fcd34d; background: linear-gradient(#fffbeb, #fff); border-width: 2px; }
+  .rank-2 { border-color: #cbd5e1; background: linear-gradient(#f8fafc, #fff); border-width: 2px; }
+  .rank-3 { border-color: #fdba74; background: linear-gradient(var(--orange-50), #fff); border-width: 2px; }
+  .rank-num { display: inline-flex; width: 1.75rem; height: 1.75rem; align-items: center; justify-content: center; border-radius: 9999px; font-size: 0.8rem; font-weight: 900; }
+  .rn-1 { background: var(--amber-400); color: #451a03; }
+  .rn-2 { background: #cbd5e1; color: #1e293b; }
+  .rn-3 { background: #fdba74; color: #431407; }
+  .crown { position: absolute; top: 0.7rem; right: 0.7rem; font-size: 1.5rem; }
+  .rank-score { font-size: 1.8rem; font-weight: 900; color: #ea580c; }
+  .rank-sub { font-size: 0.78rem; color: var(--slate-400); }
+  .rest-row { display: flex; align-items: center; gap: 0.75rem; padding: 0.7rem 0; border-bottom: 1px solid var(--slate-100); }
+  .rest-row:last-child { border-bottom: 0; }
+  .rest-rank { width: 1.5rem; text-align: center; font-weight: 700; color: var(--slate-400); font-size: 0.85rem; }
+  .rest-name { flex: 1; }
+  .rest-name .n { font-weight: 600; color: var(--slate-700); font-size: 0.85rem; }
+  .rest-name .d { font-size: 0.7rem; color: var(--slate-400); }
+  .rest-score { font-weight: 700; color: #ea580c; font-size: 0.85rem; }
+
+  .empty { text-align: center; color: var(--slate-500); padding: 2.5rem 1rem; border-style: dashed !important; }
+  ol.share-steps { margin: 0.5rem 0 1rem; padding-left: 1.25rem; font-size: 0.85rem; color: var(--slate-600); }
+  ol.share-steps li { margin-bottom: 0.3rem; }
+  .emoji-btn { width: 2.2rem; height: 2.2rem; border-radius: 0.55rem; border: 0; background: var(--slate-100); font-size: 1.05rem; cursor: pointer; padding: 0; }
+  .emoji-btn:hover { background: var(--orange-100); }
+  .emoji-btn.sel { background: var(--orange-500); box-shadow: 0 0 0 2px #fdba74; }
+  .emoji-grid { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+  .crew-row { display: flex; align-items: center; gap: 0.75rem; }
+  .crew-name { font-weight: 700; }
+  .crew-sub { font-size: 0.72rem; color: var(--slate-500); }
+  .footer-note { text-align: center; font-size: 0.7rem; color: var(--slate-400); margin-top: 2rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="head-flex">
+    <div>
+      <h1>🥙 Döner-Ratingcrew</h1>
+      <p class="subtitle" id="stats"></p>
+    </div>
+    <div class="who" id="who"></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="tabs" id="tabs"></nav>
+  <main id="view" style="margin-top:1.25rem"></main>
+  <p class="footer-note">Alle Daten bleiben lokal im Browser gespeichert – exportiere zwischendurch einen Code als Backup (Tab „Teilen“).</p>
+</div>
+
+<!-- Bewertungsfenster (rechts andockend) -->
+<div class="overlay hidden" id="rating-overlay" onclick="closeRating()"></div>
+<aside class="rating-panel" id="rating-panel">
+  <div class="rating-head" id="rating-head"></div>
+  <div class="rating-scroll" id="rating-body"></div>
+  <div class="rating-foot" id="rating-foot"></div>
+</aside>
+
+<!-- Modale Fenster (Bearbeiten / Teilen) -->
+<div class="overlay hidden" id="modal-overlay" onclick="closeModal()"></div>
+<div class="modal hidden" id="modal-card"></div>
+
+<script>
+"use strict";
+
+// ---------------------------------------------------------------- Kategorien
+
+var CATEGORIES = [
+  {
+    key: "fleisch", label: "Fleisch", emoji: "🥙",
+    subs: [
+      { key: "wuerze", label: "Würze" },
+      { key: "knusprigkeit", label: "Knusprigkeit" },
+      { key: "mundgefuehl", label: "Mundgefühl" },
+      { key: "menge", label: "Menge" }
+    ]
+  },
+  {
+    key: "sauce", label: "Soßen", emoji: "🧄",
+    subs: [
+      { key: "vielfalt", label: "Vielfalt" },
+      { key: "geschmack", label: "Geschmack" },
+      { key: "menge", label: "Menge" }
+    ]
+  },
+  {
+    key: "salat", label: "Salat", emoji: "🥗",
+    subs: [
+      { key: "frische", label: "Frische" },
+      { key: "menge", label: "Menge" }
+    ]
+  },
+  {
+    key: "brot", label: "Brot", emoji: "🥖",
+    subs: [
+      { key: "geschmack", label: "Geschmack" },
+      { key: "mundgefuehl", label: "Mundgefühl" }
+    ]
+  },
+  {
+    key: "portion", label: "Portion", emoji: "🍽️",
+    subs: [{ key: "gesamt", label: "Gesamt" }]
+  },
+  {
+    key: "veggie", label: "Veggie-Option", emoji: "🌿",
+    subs: [{ key: "gesamt", label: "Gesamt" }],
+    onlyIfVeggie: true
+  }
+];
+
+var EMOJIS = ["😎", "🌿", "🎧", "🌶️", "🦁", "🦊", "🐼", "⚡", "🔥", "🥑", "🍕", "🍺", "🎸", "☕", "🧢", "💪"];
+var STORAGE_KEY = "doener-ratingcrew-v1";
+
+// ---------------------------------------------------------------- Utils
+
+function uid() {
+  if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  return "id-" + Math.random().toString(36).slice(2) + "-" + Date.now().toString(36);
+}
+function fmt(n) { return n.toFixed(1).replace(".", ","); }
+function esc(s) {
+  return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+  });
+}
+
+// ---------------------------------------------------------------- Daten
+
+function makeSeed() {
+  var crew = [
+    { id: uid(), name: "Tobias", emoji: "😎" },
+    { id: uid(), name: "Lena", emoji: "🌿" },
+    { id: uid(), name: "Jonas", emoji: "🎧" },
+    { id: uid(), name: "Amira", emoji: "🌶️" }
+  ];
+  var shops = [
+    { id: uid(), name: "Marmara Grill", adresse: "Bahnhofstraße 12", hours: "Mo–Sa 11–22 Uhr", notes: "Falafel als Veggie-Option", veggie: true, rotkohl: false, ratings: [] },
+    { id: uid(), name: "Adana Spot", adresse: "Marktplatz 3", hours: "Täglich 10:30–23 Uhr", notes: "Längere Schlangen mittags", veggie: false, rotkohl: true, ratings: [] },
+    { id: uid(), name: "Döner Dream", adresse: "Neue Str. 40", hours: "Mo–Fr 11–21 Uhr", notes: "Hat auch Lamm", veggie: true, rotkohl: true, ratings: [] }
+  ];
+  return { crew: crew, shops: shops, activeMemberId: crew[0].id };
+}
+
+// Alte (flache) Bewertungen ins Unterpunkt-Format überführen
+function normalizeScores(raw) {
+  var out = {};
+  if (!raw || typeof raw !== "object") return out;
+  CATEGORIES.forEach(function (c) {
+    out[c.key] = {};
+    var v = raw[c.key];
+    if (v && typeof v === "object") {
+      c.subs.forEach(function (sb) {
+        out[c.key][sb.key] = typeof v[sb.key] === "number" && v[sb.key] > 0 ? v[sb.key] : 0;
+      });
+    } else if (typeof v === "number" && v > 0) {
+      out[c.key][c.subs[0].key] = v;
+    }
+  });
+  return out;
+}
+
+function normalizeShop(shop) {
+  return {
+    id: shop.id,
+    name: shop.name || "",
+    adresse: shop.adresse || "",
+    hours: shop.hours || "",
+    notes: shop.notes || "",
+    veggie: !!shop.veggie,
+    rotkohl: !!shop.rotkohl,
+    ratings: Array.isArray(shop.ratings)
+      ? shop.ratings.map(function (r) {
+          return { memberId: r.memberId, comment: r.comment || "", scores: normalizeScores(r.scores) };
+        })
+      : []
+  };
+}
+
+function loadState() {
+  try {
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    var parsed = JSON.parse(raw);
+    if (Array.isArray(parsed && parsed.crew) && Array.isArray(parsed && parsed.shops)) {
+      return {
+        crew: parsed.crew.map(function (m) { return { id: m.id, name: m.name, emoji: m.emoji }; }),
+        shops: parsed.shops.map(normalizeShop),
+        activeMemberId: parsed.activeMemberId || null
+      };
+    }
+  } catch (e) { /* Speicher nicht verfügbar */ }
+  return null;
+}
+
+var state = loadState() || makeSeed();
+var ui = {
+  tab: "laeden",
+  ratingShopId: null,
+  ratingScores: {},
+  editShopId: null,
+  selectedEmoji: EMOJIS[0]
+};
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch (e) { /* Speichern nicht verfügbar */ }
+}
+function getShop(id) { return state.shops.find(function (s) { return s.id === id; }) || null; }
+function getMember(id) { return state.crew.find(function (m) { return m.id === id; }) || null; }
+function activeMember() { return getMember(state.activeMemberId); }
+
+// ---------------------------------------------------------------- Statistik
+
+function applicableCategories(shop) {
+  return CATEGORIES.filter(function (c) { return !c.onlyIfVeggie || !!shop.veggie; });
+}
+function catScoreOfRating(rating, cat) {
+  var s = (rating.scores && rating.scores[cat.key]) || {};
+  var vals = cat.subs.map(function (sb) { return s[sb.key]; }).filter(function (v) { return v > 0; });
+  return vals.length ? vals.reduce(function (a, b) { return a + b; }, 0) / vals.length : 0;
+}
+function shopStats(shop) {
+  var cats = applicableCategories(shop);
+  var n = shop.ratings.length;
+  var catAvgs = cats.map(function (c) {
+    var vals = shop.ratings.map(function (r) { return catScoreOfRating(r, c); }).filter(function (v) { return v > 0; });
+    return {
+      key: c.key, label: c.label, emoji: c.emoji,
+      avg: vals.length ? vals.reduce(function (a, b) { return a + b; }, 0) / vals.length : 0
+    };
+  });
+  var rated = catAvgs.filter(function (c) { return c.avg > 0; });
+  var overall = rated.length ? rated.reduce(function (a, c) { return a + c.avg; }, 0) / rated.length : 0;
+  return { n: n, catAvgs: catAvgs, overall: overall };
+}
+
+// ---------------------------------------------------------------- Rendering
+
+function render() {
+  renderHeader();
+  renderTabs();
+  renderView();
+}
+
+function renderHeader() {
+  var allRatings = state.shops.reduce(function (sum, s) { return sum + s.ratings.length; }, 0);
+  document.getElementById("stats").textContent =
+    state.shops.length + " Läden · " + allRatings + " Bewertungen · Crew: " + state.crew.length +
+    " – wer hat den besten Döner der Stadt?";
+
+  var who = document.getElementById("who");
+  if (state.crew.length === 0) {
+    who.innerHTML = "<span>Bewertet als:</span><em style='font-size:0.8rem'>Crew leer</em>";
+    return;
+  }
+  var options = state.crew.map(function (m) {
+    return "<option value='" + m.id + "'" + (m.id === state.activeMemberId ? " selected" : "") + ">" +
+      esc(m.emoji + " " + m.name) + "</option>";
+  }).join("");
+  who.innerHTML = "<span>Bewertet als:</span><select class='inp-select' onchange='setActiveMember(this.value)'>" +
+    options + "</select>";
+}
+
+function renderTabs() {
+  var tabs = [
+    { key: "laeden", label: "🌯 Läden" },
+    { key: "ranking", label: "🏆 Ranking" },
+    { key: "crew", label: "👥 Crew" },
+    { key: "teilen", label: "📤 Teilen" }
+  ];
+  document.getElementById("tabs").innerHTML = tabs.map(function (t) {
+    return "<button class='tab-btn " + (ui.tab === t.key ? "active" : "") + "' onclick='switchTab(\"" + t.key + "\")'>" +
+      t.label + "</button>";
+  }).join("");
+}
+
+function switchTab(tab) { ui.tab = tab; render(); }
+
+function renderView() {
+  var view = document.getElementById("view");
+  if (ui.tab === "laeden") view.innerHTML = shopsTabHtml();
+  else if (ui.tab === "ranking") view.innerHTML = rankingTabHtml();
+  else if (ui.tab === "crew") view.innerHTML = crewTabHtml();
+  else view.innerHTML = teilenTabHtml();
+}
+
+// ------------------------------------------------ Tab: Läden
+
+function shopsTabHtml() {
+  var html = addShopFormHtml();
+  if (state.shops.length === 0) {
+    html += "<div class='card empty'>Noch keine Läden – füge oben deinen ersten Dönerladen hinzu 🥙</div>";
+    return html;
+  }
+  html += "<div class='grid-shops'>" + state.shops.map(shopCardHtml).join("") + "</div>";
+  return html;
+}
+
+function addShopFormHtml() {
+  return "<div class='card'>" +
+    "<h3 style='margin:0 0 0.75rem;font-size:0.95rem'>➕ Neuen Dönerladen hinzufügen</h3>" +
+    "<div class='form-grid'>" +
+      "<div class='field'><label for='shop-name'>Name</label><input id='shop-name' class='inp' placeholder='z. B. Marmara Grill'></div>" +
+      "<div class='field'><label for='shop-adresse'>Adresse / Viertel</label><input id='shop-adresse' class='inp' placeholder='z. B. Bahnhofstraße 12'></div>" +
+      "<div class='field'><label for='shop-hours'>Öffnungszeiten</label><input id='shop-hours' class='inp' placeholder='z. B. Mo–Sa 11–22 Uhr'></div>" +
+      "<div class='field'><label for='shop-notes'>Notiz</label><input id='shop-notes' class='inp' placeholder='z. B. Queue-Tipps, Spezialitäten'></div>" +
+    "</div>" +
+    "<div class='checkbox-label-group' style='display:flex;flex-wrap:wrap;gap:1.5rem;margin:0.5rem 0'>" +
+      "<label class='checkbox-label'><input type='checkbox' id='shop-veggie'> 🌿 Vegetarische Option vorhanden</label>" +
+      "<label class='checkbox-label'><input type='checkbox' id='shop-rotkohl'> 🥬 Rotkohl verfügbar</label>" +
+    "</div>" +
+    "<div style='display:flex;justify-content:flex-end'><button class='btn btn-primary' onclick='addShop()'>➕ Laden hinzufügen</button></div>" +
+  "</div>";
+}
+
+function addShop() {
+  var name = document.getElementById("shop-name").value.trim();
+  if (!name) return;
+  state.shops.push({
+    id: uid(),
+    name: name,
+    adresse: document.getElementById("shop-adresse").value.trim(),
+    hours: document.getElementById("shop-hours").value.trim(),
+    notes: document.getElementById("shop-notes").value.trim(),
+    veggie: document.getElementById("shop-veggie").checked,
+    rotkohl: document.getElementById("shop-rotkohl").checked,
+    ratings: []
+  });
+  saveState();
+  render();
+}
+
+function scoreBadgeHtml(score, n) {
+  if (n === 0) return "<div class='score-badge score-empty'><span class='v'>★</span><span class='c'>neu</span></div>";
+  var cls = score >= 4 ? "score-em" : score >= 3 ? "score-am" : "score-ro";
+  return "<div class='score-badge " + cls + "'><span class='v'>" + fmt(score) + "</span><span class='c'>" + n + "×</span></div>";
+}
+
+function categoryBarsHtml(stats) {
+  return stats.catAvgs.map(function (c) {
+    var pct = (c.avg / 5) * 100;
+    return "<div class='cat-row'>" +
+      "<span class='cat-label'>" + c.emoji + " " + esc(c.label) + "</span>" +
+      "<div class='bar-track'><div class='bar-fill' style='width:" + pct + "%'></div></div>" +
+      "<span class='cat-val'>" + (c.avg > 0 ? fmt(c.avg) : "–") + "</span>" +
+    "</div>";
+  }).join("");
+}
+
+function shopCardHtml(shop) {
+  var st = shopStats(shop);
+  var am = activeMember();
+  var alreadyRated = !!(am && shop.ratings.some(function (r) { return r.memberId === am.id; }));
+
+  var badges = "";
+  if (shop.notes) badges += "<span class='badge badge-amber'>" + esc(shop.notes) + "</span>";
+  if (shop.veggie) badges += "<span class='badge badge-emerald'>🌿 Veggie-Option</span>";
+  if (shop.rotkohl) badges += "<span class='badge badge-rose'>🥬 Rotkohl</span>";
+
+  var avatars = state.crew.map(function (m) {
+    var rated = shop.ratings.some(function (r) { return r.memberId === m.id; });
+    return "<span class='" + (rated ? "" : "dim") + "' title='" + esc(m.name) + (rated ? ": hat bewertet" : ": noch offen") + "'>" +
+      "<span class='avatar av-sm'>" + m.emoji + "</span></span>";
+  }).join("");
+  var ratedText = st.n > 0 ? st.n + "/" + state.crew.length + " haben bewertet" : "noch keine Bewertung";
+
+  var comments = "";
+  var withComments = shop.ratings.filter(function (r) { return r.comment; });
+  if (withComments.length) {
+    comments = "<div class='comments'>" + withComments.map(function (r) {
+      var m = getMember(r.memberId);
+      return "<p><b>" + esc(m ? m.emoji + " " + m.name : "Unbekannt") + ":</b> „" + esc(r.comment) + "“</p>";
+    }).join("") + "</div>";
+  }
+
+  return "<div class='card'>" +
+    "<div class='shop-head'>" +
+      "<div>" +
+        "<h3 class='shop-title'>" + esc(shop.name) + "</h3>" +
+        "<p class='shop-meta'>📍 " + esc(shop.adresse || "keine Adresse") + "</p>" +
+        (shop.hours ? "<p class='shop-meta'>🕒 " + esc(shop.hours) + "</p>" : "") +
+        "<div class='badges'>" + badges + "</div>" +
+      "</div>" +
+      scoreBadgeHtml(st.overall, st.n) +
+    "</div>" +
+    "<div class='avatar-row' style='margin-top:0.75rem'>" + avatars +
+      "<span style='font-size:0.72rem;color:var(--slate-500);margin-left:0.25rem'>" + ratedText + "</span>" +
+    "</div>" +
+    (st.n > 0 ? "<div style='margin-top:0.75rem'>" + categoryBarsHtml(st) + "</div>" : "") +
+    comments +
+    "<div class='card-actions'>" +
+      "<button class='btn btn-primary btn-sm' onclick='openRating(\"" + shop.id + "\")'" + (am ? "" : " disabled") + ">" +
+        (alreadyRated ? "✏️ Bewertung bearbeiten" : "⭐ Jetzt bewerten") +
+      "</button>" +
+      "<span class='icon-actions'>" +
+        "<button class='btn btn-ghost btn-ghost-edit btn-sm' title='Laden bearbeiten' onclick='openEdit(\"" + shop.id + "\")'>✏️</button>" +
+        "<button class='btn btn-ghost btn-sm' title='Laden löschen' onclick='removeShop(\"" + shop.id + "\")'>🗑️</button>" +
+      "</span>" +
+    "</div>" +
+  "</div>";
+}
+
+function removeShop(id) {
+  state.shops = state.shops.filter(function (s) { return s.id !== id; });
+  if (ui.ratingShopId === id) closeRating();
+  saveState();
+  render();
+}
+
+// ------------------------------------------------ Tab: Ranking
+
+function rankingTabHtml() {
+  var rated = state.shops
+    .map(function (s) { return { shop: s, stats: shopStats(s) }; })
+    .filter(function (x) { return x.stats.n > 0; })
+    .sort(function (a, b) { return b.stats.overall - a.stats.overall; });
+  var unrated = state.shops.filter(function (s) { return s.ratings.length === 0; });
+
+  if (rated.length === 0) {
+    return "<div class='card empty'>Noch keine Bewertungen – sobald die Crew loslegt, erscheint hier das Döner-Ranking 🏆</div>";
+  }
+
+  var podium = rated.slice(0, 3);
+  var rest = rated.slice(3);
+  var rankCls = ["rank-1", "rank-2", "rank-3"];
+  var numCls = ["rn-1", "rn-2", "rn-3"];
+
+  var podiumHtml = "<div class='podium'>" + podium.map(function (x, i) {
+    return "<div class='card " + rankCls[i] + "'>" +
+      (i === 0 ? "<span class='crown'>👑</span>" : "") +
+      "<div style='display:flex;align-items:center;gap:0.5rem'>" +
+        "<span class='rank-num " + numCls[i] + "'>" + (i + 1) + "</span>" +
+        "<h3 class='shop-title'>" + esc(x.shop.name) + "</h3>" +
+      "</div>" +
+      "<p style='margin:0.4rem 0 0'><span class='rank-score'>" + fmt(x.stats.overall) + "</span> " +
+        "<span class='rank-sub'>/ 5 · " + x.stats.n + (x.stats.n === 1 ? " Stimme" : " Stimmen") + "</span></p>" +
+      "<div style='margin-top:0.75rem'>" + categoryBarsHtml(x.stats) + "</div>" +
+      "<p style='font-size:0.7rem;color:var(--slate-400);margin:0.75rem 0 0'>Gewertet von " +
+        x.shop.ratings.length + " von " + state.crew.length + " Crew-Mitgliedern</p>" +
+    "</div>";
+  }).join("") + "</div>";
+
+  var restHtml = "";
+  if (rest.length) {
+    restHtml = "<div class='card' style='margin-top:1rem;padding:0.5rem 1.25rem'>" + rest.map(function (x, i) {
+      return "<div class='rest-row'>" +
+        "<span class='rest-rank'>" + (i + 4) + "</span>" +
+        "<span class='rest-name'><span class='n'>" + esc(x.shop.name) + "</span><br><span class='d'>" +
+          x.stats.n + (x.stats.n === 1 ? " Bewertung" : " Bewertungen") + "</span></span>" +
+        "<span class='rest-score'>" + fmt(x.stats.overall) + " ★</span>" +
+      "</div>";
+    }).join("") + "</div>";
+  }
+
+  var unratedHtml = "";
+  if (unrated.length) {
+    unratedHtml = "<div class='card empty' style='margin-top:1rem;padding:1rem'>" +
+      "<p style='margin:0 0 0.5rem;font-weight:600;color:var(--slate-600);font-size:0.85rem'>🎯 Noch ungetestet – wartet auf die Crew:</p>" +
+      "<div class='badges' style='justify-content:center'>" + unrated.map(function (s) {
+        return "<span class='badge badge-amber'>" + esc(s.name) + "</span>";
+      }).join("") + "</div></div>";
+  }
+
+  return podiumHtml + restHtml + unratedHtml;
+}
+
+// ------------------------------------------------ Tab: Crew
+
+function crewTabHtml() {
+  var emojiHtml = "<div class='emoji-grid'>" + EMOJIS.map(function (e) {
+    return "<button type='button' class='emoji-btn" + (ui.selectedEmoji === e ? " sel" : "") + "' onclick='pickEmoji(\"" + e + "\")'>" + e + "</button>";
+  }).join("") + "</div>";
+
+  var addCard = "<div class='card'>" +
+    "<h3 style='margin:0 0 0.75rem;font-size:0.95rem'>➕ Crew-Mitglied hinzufügen</h3>" +
+    "<div class='form-grid'>" +
+      "<div class='field'><label for='member-name'>Name</label><input id='member-name' class='inp' placeholder='z. B. Fatih'></div>" +
+      "<div class='field'><label>Avatar</label>" + emojiHtml + "</div>" +
+    "</div>" +
+    "<div style='display:flex;justify-content:flex-end'><button class='btn btn-primary' onclick='addMember()'>➕ Zur Crew hinzufügen</button></div>" +
+  "</div>";
+
+  var crewCards = state.crew.map(function (m) {
+    var count = state.shops.reduce(function (sum, s) {
+      return sum + s.ratings.filter(function (r) { return r.memberId === m.id; }).length;
+    }, 0);
+    return "<div class='card' style='border-color:var(--orange-100)'>" +
+      "<div class='crew-row'>" +
+        "<span class='avatar av-lg'>" + m.emoji + "</span>" +
+        "<span style='flex:1'><span class='crew-name'>" + esc(m.name) + "</span><br>" +
+          "<span class='crew-sub'>" + count + (count === 1 ? " Bewertung" : " Bewertungen") +
+          (m.id === state.activeMemberId ? " · gerade aktiv" : "") + "</span></span>" +
+        "<button class='btn btn-ghost btn-sm' title='Mitglied entfernen' onclick='removeMember(\"" + m.id + "\")'>🗑️</button>" +
+      "</div>" +
+    "</div>";
+  }).join("");
+
+  return addCard + (state.crew.length ? "<div class='grid-crew'>" + crewCards + "</div>" : "");
+}
+
+function pickEmoji(e) {
+  ui.selectedEmoji = e;
+  var btns = document.querySelectorAll(".emoji-btn");
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].classList.toggle("sel", btns[i].textContent === e);
+  }
+}
+
+function addMember() {
+  var nameEl = document.getElementById("member-name");
+  if (!nameEl || !nameEl.value.trim()) return;
+  var member = { id: uid(), name: nameEl.value.trim(), emoji: ui.selectedEmoji };
+  state.crew.push(member);
+  if (!state.activeMemberId) state.activeMemberId = member.id;
+  saveState();
+  render();
+}
+
+function removeMember(id) {
+  state.crew = state.crew.filter(function (m) { return m.id !== id; });
+  state.shops.forEach(function (s) {
+    s.ratings = s.ratings.filter(function (r) { return r.memberId !== id; });
+  });
+  if (state.activeMemberId === id) state.activeMemberId = null;
+  saveState();
+  render();
+}
+
+function setActiveMember(id) {
+  state.activeMemberId = id || null;
+  saveState();
+  render();
+}
+
+// ------------------------------------------------ Tab: Teilen
+
+function teilenTabHtml() {
+  return "<div class='card'>" +
+    "<h3 style='margin:0 0 0.5rem;font-size:1.05rem;font-weight:800'>📤 Bewertungen der Crew zusammenführen</h3>" +
+    "<p style='margin:0;font-size:0.85rem;color:var(--slate-500)'>Die Daten liegen nur im Browser, in dem sie eingegeben wurden. So kombiniert ihr alle Ergebnisse:</p>" +
+    "<ol class='share-steps'>" +
+      "<li>Jede Person bewertet in ihrer eigenen Kopie der App.</li>" +
+      "<li>Unter <b>Code exportieren</b> erzeugt jede Person einen Code und schickt ihn z. B. per Messenger oder Mail in die Gruppe.</li>" +
+      "<li>Eine Person fügt alle Codes unter <b>Code importieren</b> ein – Läden, Crew und Bewertungen werden automatisch zusammengeführt.</li>" +
+    "</ol>" +
+    "<div style='display:flex;flex-wrap:wrap;gap:0.75rem'>" +
+      "<button class='btn btn-primary' onclick='openShare(\"export\")'>📤 Code exportieren</button>" +
+      "<button class='btn btn-outline' onclick='openShare(\"import\")'>📥 Code importieren</button>" +
+    "</div>" +
+    "<p style='font-size:0.7rem;color:var(--slate-400);margin:1rem 0 0'>Tipp: Zwischendurch selbst einen Code exportieren – damit habt ihr immer ein Backup eurer Daten.</p>" +
+  "</div>";
+}
+
+function openShare(mode) {
+  if (mode === "export") {
+    var code = JSON.stringify({ crew: state.crew, shops: state.shops });
+    openModal(
+      "<h3>📤 Code exportieren</h3>" +
+      "<p class='desc'>Diesen Code an die Crew verschicken. Die Empfänger fügen ihn bei sich unter „Teilen → Code importieren“ ein.</p>" +
+      "<textarea id='export-code' class='code-area' readonly onfocus='this.select()'>" + esc(code) + "</textarea>" +
+      "<div class='modal-actions'>" +
+        "<span id='copy-msg' style='flex:1;font-size:0.72rem;align-self:center'></span>" +
+        "<button class='btn btn-primary' onclick='copyExport()'>In Zwischenablage kopieren</button>" +
+      "</div>"
+    );
+  } else {
+    openModal(
+      "<h3>📥 Code importieren</h3>" +
+      "<p class='desc'>Hier den Code aus der App der anderen Person einfügen. Fehlende Läden und Mitglieder werden ergänzt, jede Person überschreibt nur ihre eigenen Bewertungen.</p>" +
+      "<textarea id='import-code' class='code-area' style='background:#fff' placeholder='Code hier einfügen …'></textarea>" +
+      "<div class='modal-actions'>" +
+        "<span id='import-msg' style='flex:1;font-size:0.72rem;align-self:center'></span>" +
+        "<button class='btn btn-primary' onclick='doImport()'>Zusammenführen</button>" +
+      "</div>"
+    );
+  }
+}
+
+function copyExport() {
+  var ta = document.getElementById("export-code");
+  var msg = document.getElementById("copy-msg");
+  function ok() { msg.innerHTML = "<span class='msg-ok'>In Zwischenablage kopiert ✓</span>"; }
+  function fail() { msg.innerHTML = "<span class='msg-err'>Kopieren blockiert – Code bitte manuell markieren und kopieren</span>"; }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(ta.value).then(ok, function () {
+      try { ta.focus(); ta.select(); document.execCommand("copy") ? ok() : fail(); } catch (e) { fail(); }
+    });
+  } else {
+    try { ta.focus(); ta.select(); document.execCommand("copy") ? ok() : fail(); } catch (e) { fail(); }
+  }
+}
+
+function doImport() {
+  var msg = document.getElementById("import-msg");
+  try {
+    var parsed = JSON.parse(document.getElementById("import-code").value);
+    if (!Array.isArray(parsed.crew) || !Array.isArray(parsed.shops)) throw new Error("invalid");
+    var result = mergeImported(parsed);
+    saveState();
+    render();
+    document.getElementById("import-code").value = "";
+    msg.innerHTML = "<span class='msg-ok'>✓ " + result.ratings + " Bewertungen übernommen (" +
+      result.members + " neue Mitglieder, " + result.shops + " neue Läden)</span>";
+  } catch (e) {
+    msg.innerHTML = "<span class='msg-err'>❌ Ungültiger Code – bitte vollständig kopieren</span>";
+  }
+}
+
+function mergeImported(imported) {
+  var key = function (s) { return s.trim().toLowerCase(); };
+  // Crew nach Namen zusammenführen
+  var crewMap = new Map();
+  state.crew.forEach(function (m) { crewMap.set(key(m.name), m); });
+  var addedMembers = [];
+  imported.crew.forEach(function (m) {
+    if (!crewMap.has(key(m.name))) {
+      var added = { id: uid(), name: m.name, emoji: m.emoji };
+      addedMembers.push(added);
+      crewMap.set(key(added.name), added);
+    }
+  });
+  var importMemberById = new Map();
+  imported.crew.forEach(function (m) { importMemberById.set(m.id, m); });
+
+  // Läden nach Namen zusammenführen; jedes Crew-Mitglied überschreibt nur seine eigene Bewertung
+  var nextShops = state.shops.map(function (s) { return Object.assign({}, s, { ratings: s.ratings.slice() }); });
+  var shopMap = new Map();
+  nextShops.forEach(function (s) { shopMap.set(key(s.name), s); });
+  var addedShops = [];
+  var takenRatings = 0;
+
+  imported.shops.forEach(function (rawShop) {
+    var s = normalizeShop(rawShop);
+    var ratings = s.ratings.map(function (r) {
+      var raw = importMemberById.get(r.memberId);
+      var local = raw && crewMap.get(key(raw.name));
+      return local ? { memberId: local.id, scores: r.scores, comment: r.comment } : null;
+    }).filter(Boolean);
+    takenRatings += ratings.length;
+
+    var target = shopMap.get(key(s.name));
+    if (target) {
+      ratings.forEach(function (r) {
+        target.ratings = target.ratings.filter(function (x) { return x.memberId !== r.memberId; }).concat([r]);
+      });
+    } else {
+      var added = {
+        id: uid(), name: s.name, adresse: s.adresse, hours: s.hours, notes: s.notes,
+        veggie: s.veggie, rotkohl: s.rotkohl, ratings: ratings
+      };
+      addedShops.push(added);
+      shopMap.set(key(added.name), added);
+    }
+  });
+
+  state.crew = state.crew.concat(addedMembers);
+  state.shops = nextShops.concat(addedShops);
+  return { ratings: takenRatings, members: addedMembers.length, shops: addedShops.length };
+}
+
+// ------------------------------------------------ Bewertungsfenster (rechts)
+
+function openRating(id) {
+  if (!activeMember()) return;
+  var shop = getShop(id);
+  if (!shop) return;
+  ui.ratingShopId = id;
+  var existing = shop.ratings.find(function (r) { return r.memberId === state.activeMemberId; });
+  ui.ratingScores = existing ? JSON.parse(JSON.stringify(existing.scores)) : emptyScores(shop);
+  ui.ratingComment = existing ? (existing.comment || "") : "";
+  document.getElementById("rating-overlay").classList.remove("hidden");
+  document.getElementById("rating-panel").classList.add("open");
+  renderRatingPanel();
+}
+
+function emptyScores(shop) {
+  var acc = {};
+  applicableCategories(shop).forEach(function (c) {
+    acc[c.key] = {};
+    c.subs.forEach(function (sb) { acc[c.key][sb.key] = 0; });
+  });
+  return acc;
+}
+
+function ratingCats() {
+  var shop = getShop(ui.ratingShopId);
+  return shop ? applicableCategories(shop) : [];
+}
+
+function renderRatingPanel() {
+  var shop = getShop(ui.ratingShopId);
+  var am = activeMember();
+  if (!shop || !am) return;
+
+  document.getElementById("rating-head").innerHTML =
+    "<h3>🌯 " + esc(shop.name) + "</h3>" +
+    "<p>Bewertung für <b>" + esc(am.emoji + " " + am.name) + "</b> · 1–5 Sterne je Unterpunkt</p>" +
+    (shop.veggie ? "<p class='hint'>🌿 Dieser Laden hat eine Veggie-Option – sie wird mitbewertet.</p>" : "") +
+    "<button class='close-x' onclick='closeRating()' aria-label='Schließen'>✕</button>";
+
+  var body = ratingCats().map(function (c) {
+    var subRows = c.subs.map(function (sb) {
+      var val = (ui.ratingScores[c.key] && ui.ratingScores[c.key][sb.key]) || 0;
+      var stars = "";
+      for (var n = 1; n <= 5; n++) {
+        stars += "<button type='button' class='star-btn " + (n <= val ? "on" : "") + "' aria-label='" + n + " Sterne' " +
+          "onclick='setScore(\"" + c.key + "\", \"" + sb.key + "\", " + n + ")'>★</button>";
+      }
+      return "<div class='sub-row'><span class='sub-label'>" + esc(sb.label) + "</span><span>" + stars + "</span></div>";
+    }).join("");
+    return "<div class='cat-box'><h4>" + c.emoji + " " + esc(c.label) + "</h4>" + subRows + "</div>";
+  }).join("");
+
+  body += "<div style='margin-top:0.5rem'><label for='rating-comment'>Kommentar (optional)</label>" +
+    "<textarea id='rating-comment' class='inp' rows='2' placeholder='z. B. Beste Kruste bisher, aber Soße etwas dünn …'>" +
+    esc(ui.ratingComment) + "</textarea></div>";
+
+  document.getElementById("rating-body").innerHTML = body;
+  renderRatingFoot();
+}
+
+function setScore(catKey, subKey, n) {
+  if (!ui.ratingScores[catKey]) ui.ratingScores[catKey] = {};
+  ui.ratingScores[catKey][subKey] = n;
+  var c = document.getElementById("rating-comment");
+  if (c) ui.ratingComment = c.value;
+  renderRatingPanel();
+}
+
+function ratingComplete() {
+  return ratingCats().every(function (c) {
+    return c.subs.every(function (sb) {
+      return ui.ratingScores[c.key] && ui.ratingScores[c.key][sb.key] > 0;
+    });
+  });
+}
+
+function renderRatingFoot() {
+  document.getElementById("rating-foot").innerHTML =
+    "<button class='btn btn-outline' onclick='closeRating()'>Abbrechen</button>" +
+    "<button class='btn btn-primary'" + (ratingComplete() ? "" : " disabled") + " onclick='saveRating()'>⭐ Bewertung speichern</button>";
+}
+
+function closeRating() {
+  ui.ratingShopId = null;
+  document.getElementById("rating-panel").classList.remove("open");
+  document.getElementById("rating-overlay").classList.add("hidden");
+}
+
+function saveRating() {
+  var shop = getShop(ui.ratingShopId);
+  var am = activeMember();
+  var commentEl = document.getElementById("rating-comment");
+  if (commentEl) ui.ratingComment = commentEl.value;
+  if (!shop || !am || !ratingComplete()) return;
+
+  var clean = {};
+  ratingCats().forEach(function (c) {
+    clean[c.key] = {};
+    c.subs.forEach(function (sb) { clean[c.key][sb.key] = ui.ratingScores[c.key][sb.key]; });
+  });
+
+  shop.ratings = shop.ratings.filter(function (r) { return r.memberId !== am.id; });
+  shop.ratings.push({ memberId: am.id, scores: clean, comment: ui.ratingComment.trim() });
+  saveState();
+  closeRating();
+  render();
+}
+
+// ------------------------------------------------ Laden bearbeiten
+
+function openEdit(id) {
+  var shop = getShop(id);
+  if (!shop) return;
+  ui.editShopId = id;
+  openModal(
+    "<h3>✏️ Laden bearbeiten</h3>" +
+    "<div class='form-grid'>" +
+      "<div class='field'><label for='edit-name'>Name</label><input id='edit-name' class='inp' value=\"" + esc(shop.name) + "\"></div>" +
+      "<div class='field'><label for='edit-adresse'>Adresse / Viertel</label><input id='edit-adresse' class='inp' value=\"" + esc(shop.adresse) + "\"></div>" +
+      "<div class='field'><label for='edit-hours'>Öffnungszeiten</label><input id='edit-hours' class='inp' value=\"" + esc(shop.hours) + "\" placeholder='z. B. Mo–Sa 11–22 Uhr'></div>" +
+      "<div class='field'><label for='edit-notes'>Notiz</label><input id='edit-notes' class='inp' value=\"" + esc(shop.notes) + "\"></div>" +
+    "</div>" +
+    "<div class='check-box'>" +
+      "<label class='checkbox-label'><input type='checkbox' id='edit-veggie'" + (shop.veggie ? " checked" : "") + "> 🌿 Vegetarische Option vorhanden</label>" +
+      "<label class='checkbox-label'><input type='checkbox' id='edit-rotkohl'" + (shop.rotkohl ? " checked" : "") + "> 🥬 Rotkohl verfügbar</label>" +
+    "</div>" +
+    "<div class='modal-actions'>" +
+      "<button class='btn btn-outline' onclick='closeModal()'>Abbrechen</button>" +
+      "<button class='btn btn-primary' onclick='saveEdit()'>Speichern</button>" +
+    "</div>"
+  );
+}
+
+function saveEdit() {
+  var shop = getShop(ui.editShopId);
+  if (!shop) return closeModal();
+  var name = document.getElementById("edit-name").value.trim();
+  if (!name) return;
+  shop.name = name;
+  shop.adresse = document.getElementById("edit-adresse").value.trim();
+  shop.hours = document.getElementById("edit-hours").value.trim();
+  shop.notes = document.getElementById("edit-notes").value.trim();
+  shop.veggie = document.getElementById("edit-veggie").checked;
+  shop.rotkohl = document.getElementById("edit-rotkohl").checked;
+  saveState();
+  closeModal();
+  render();
+}
+
+// ------------------------------------------------ Modale Fenster
+
+function openModal(innerHtml) {
+  document.getElementById("modal-overlay").classList.remove("hidden");
+  document.getElementById("modal-card").innerHTML = innerHtml;
+  document.getElementById("modal-card").classList.remove("hidden");
+}
+
+function closeModal() {
+  document.getElementById("modal-overlay").classList.add("hidden");
+  document.getElementById("modal-card").classList.add("hidden");
+  ui.editShopId = null;
+}
+
+// ---------------------------------------------------------------- Start
+
+render();
+</script>
+</body>
+</html>
